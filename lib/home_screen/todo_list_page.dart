@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_list_riverpod/home_screen/components/modal_widget.dart';
 import 'package:todo_list_riverpod/home_screen/components/todo_list_widget.dart';
+import 'package:todo_list_riverpod/home_screen/state/todo_provider.dart';
 
 import 'components/filter.dart';
 
@@ -13,6 +14,12 @@ class TodoListPage extends ConsumerStatefulWidget {
 }
 
 class _TodoListPageState extends ConsumerState<TodoListPage> {
+  @override
+  void initState() {
+    ref.read(todoProvider.notifier).getLocalStorage();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

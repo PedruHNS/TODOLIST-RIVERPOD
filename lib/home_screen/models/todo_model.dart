@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
 
 class TodoModel {
   final String id;
@@ -44,4 +44,27 @@ class TodoModel {
       isComplete: isComplete ?? this.isComplete,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'title': title,
+      'description': description,
+      'isComplete': isComplete,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory TodoModel.fromMap(Map<String, dynamic> map) {
+    return TodoModel(
+      id: map['id'] ?? '',
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      isComplete: map['isComplete'] ?? false,
+    );
+  }
+
+  factory TodoModel.fromJson(String source) =>
+      TodoModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

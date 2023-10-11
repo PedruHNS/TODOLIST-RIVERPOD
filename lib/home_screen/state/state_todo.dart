@@ -21,3 +21,7 @@ final class TodoListRemove extends StateTodo {
 final class TodoListEdit extends StateTodo {
   TodoListEdit({required super.todos});
 }
+
+final class LoadTodos extends StateTodo {
+  LoadTodos({required super.todos});
+}
