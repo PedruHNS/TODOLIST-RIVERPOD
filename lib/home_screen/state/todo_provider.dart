@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_list_riverpod/home_screen/state/state_todo.dart';
 import 'package:todo_list_riverpod/home_screen/models/todo_model.dart';
+
 import 'package:todo_list_riverpod/repository/todo_repository_interface.dart';
 
 import '../../repository/local_storage.dart';
@@ -12,6 +13,50 @@ enum FilterSelect {
   uncompleted;
 }
 // --------------------------
+
+final validatorProvider = StateNotifierProvider<ValidadorNotifier, String?>(
+    (ref) => ValidadorNotifier());
+
+class ValidadorNotifier extends StateNotifier<String?> {
+  ValidadorNotifier() : super(null);
+
+  String? validator(String? text) {
+    if (text == null || text.isEmpty) {
+      return 'Campo Invalido';
+    } else {
+      return null;
+    }
+  }
+}
+
+final filterProvider = StateProvider((ref) => FilterSelect.all);
+
+final todoProvider = StateNotifierProvider<TodoNotifier, StateTodo>((ref) {
+  return TodoNotifier(
+    todoRepository: ref.watch(todoRepositoryProvider),
+  );
+});
+
+final homeFilteredListProvider = StateProvider((ref) {
+  final filter = ref.watch(filterProvider);
+  final listTodos = ref.watch(todoProvider);
+
+  final list = listTodos.todos;
+  switch (filter) {
+    case FilterSelect.all:
+      return list;
+    case FilterSelect.completed:
+      return list.where((todo) => todo.isComplete == true).toList();
+    case FilterSelect.uncompleted:
+      return list.where((todo) => todo.isComplete == false).toList();
+  }
+  //ou//
+  // return switch (filter) {
+  //   FilterSelect.all => list,
+  //   FilterSelect.completed => list.where((todo) => todo.isComplete).toList(),
+  //   FilterSelect.uncompleted => list.where((todo) => !todo.isComplete).toList(),
+  // };
+});
 
 // aqui fica a regra de negócio dos estados do Todo List
 class TodoNotifier extends StateNotifier<StateTodo> {
@@ -74,32 +119,3 @@ class TodoNotifier extends StateNotifier<StateTodo> {
     state = TodoListEdit(todos: todoNew);
   }
 }
-
-final filterProvider = StateProvider((ref) => FilterSelect.all);
-
-final todoProvider = StateNotifierProvider<TodoNotifier, StateTodo>((ref) {
-  return TodoNotifier(
-    todoRepository: ref.watch(todoRepositoryProvider),
-  );
-});
-
-final homeFilteredListProvider = StateProvider((ref) {
-  final filter = ref.watch(filterProvider);
-  final listTodos = ref.watch(todoProvider);
-
-  final list = listTodos.todos;
-  switch (filter) {
-    case FilterSelect.all:
-      return list;
-    case FilterSelect.completed:
-      return list.where((todo) => todo.isComplete == true).toList();
-    case FilterSelect.uncompleted:
-      return list.where((todo) => todo.isComplete == false).toList();
-  }
-  //ou//
-  // return switch (filter) {
-  //   FilterSelect.all => list,
-  //   FilterSelect.completed => list.where((todo) => todo.isComplete).toList(),
-  //   FilterSelect.uncompleted => list.where((todo) => !todo.isComplete).toList(),
-  // };
-});

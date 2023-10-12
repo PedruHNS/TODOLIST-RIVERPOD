@@ -17,6 +17,8 @@ class _ModalState extends ConsumerState<Modal> {
   final _controllerTitle = TextEditingController();
   final _controllerDescription = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     _controllerTitle.dispose();
@@ -25,15 +27,22 @@ class _ModalState extends ConsumerState<Modal> {
   }
 
   void _todoAdd() {
-    ref.read(todoProvider.notifier).todoAdd(
-          TodoModel(
-            id: const Uuid().v4(),
-            title: _controllerTitle.text,
-            description: _controllerDescription.text,
-            isComplete: false,
-          ),
-        );
-    Navigator.pop(context);
+    if (_formKey.currentState!.validate()) {
+      ref.read(todoProvider.notifier).todoAdd(
+            TodoModel(
+              id: const Uuid().v4(),
+              title: _controllerTitle.text,
+              description: _controllerDescription.text,
+              isComplete: false,
+            ),
+          );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Inserido com sucesso'),
+        ),
+      );
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -41,44 +50,57 @@ class _ModalState extends ConsumerState<Modal> {
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: Container(
-        height: 300,
+        height: 340,
         decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(30))),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                height: 8,
-                width: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  height: 8,
+                  width: 60,
+                  decoration: const BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InputCustom(
-                controller: _controllerTitle,
-                label: 'Título',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InputCustom(
+                    controller: _controllerTitle,
+                    label: 'Título',
+                    validator: (text) {
+                      return ref
+                          .read(validatorProvider.notifier)
+                          .validator(text);
+                    }),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InputCustom(
-                controller: _controllerDescription,
-                label: 'Descrição',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InputCustom(
+                  controller: _controllerDescription,
+                  label: 'Descrição',
+                  validator: (text) {
+                    return ref
+                        .read(validatorProvider.notifier)
+                        .validator(text);
+                  },
+                ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: _todoAdd,
-              child: const Text('Criar'),
-            )
-          ],
+              ElevatedButton(
+                onPressed: _todoAdd,
+                child: const Text('Criar'),
+              )
+            ],
+          ),
         ),
       ),
     );
