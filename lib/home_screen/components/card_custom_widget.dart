@@ -14,26 +14,29 @@ class CardWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: isComplete ? Colors.grey : Colors.black,
-              decoration: isComplete ? TextDecoration.lineThrough : null,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: isComplete ? Colors.grey : Colors.black,
+                decoration: isComplete ? TextDecoration.lineThrough : null,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Text(
-            description,
-            style: TextStyle(
-              fontSize: 18,
-              decoration: isComplete ? TextDecoration.lineThrough : null,
-              color: isComplete ? Colors.grey : Colors.black,
+            Text(
+              description,
+              style: TextStyle(
+                fontSize: 18,
+                decoration: isComplete ? TextDecoration.lineThrough : null,
+                color: isComplete ? Colors.grey : Colors.black,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

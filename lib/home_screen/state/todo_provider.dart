@@ -1,62 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_list_riverpod/home_screen/state/state_todo.dart';
 import 'package:todo_list_riverpod/home_screen/models/todo_model.dart';
-
 import 'package:todo_list_riverpod/repository/todo_repository_interface.dart';
-
 import '../../repository/local_storage.dart';
 
-// enumador para selecionar o filtro
-enum FilterSelect {
-  all,
-  completed,
-  uncompleted;
-}
-// --------------------------
-
-final validatorProvider = StateNotifierProvider<ValidadorNotifier, String?>(
-    (ref) => ValidadorNotifier());
-
-class ValidadorNotifier extends StateNotifier<String?> {
-  ValidadorNotifier() : super(null);
-
-  String? validator(String? text) {
-    if (text == null || text.isEmpty) {
-      return 'Campo Invalido';
-    } else {
-      return null;
-    }
-  }
-}
-
-final filterProvider = StateProvider((ref) => FilterSelect.all);
-
-final todoProvider = StateNotifierProvider<TodoNotifier, StateTodo>((ref) {
-  return TodoNotifier(
-    todoRepository: ref.watch(todoRepositoryProvider),
-  );
-});
-
-final homeFilteredListProvider = StateProvider((ref) {
-  final filter = ref.watch(filterProvider);
-  final listTodos = ref.watch(todoProvider);
-
-  final list = listTodos.todos;
-  switch (filter) {
-    case FilterSelect.all:
-      return list;
-    case FilterSelect.completed:
-      return list.where((todo) => todo.isComplete == true).toList();
-    case FilterSelect.uncompleted:
-      return list.where((todo) => todo.isComplete == false).toList();
-  }
-  //ou//
-  // return switch (filter) {
-  //   FilterSelect.all => list,
-  //   FilterSelect.completed => list.where((todo) => todo.isComplete).toList(),
-  //   FilterSelect.uncompleted => list.where((todo) => !todo.isComplete).toList(),
-  // };
-});
+final todoProvider = StateNotifierProvider<TodoNotifier, StateTodo>(
+  (ref) {
+    return TodoNotifier(
+      todoRepository: ref.watch(todoRepositoryProvider),
+    );
+  },
+);
 
 // aqui fica a regra de negócio dos estados do Todo List
 class TodoNotifier extends StateNotifier<StateTodo> {
@@ -64,6 +18,7 @@ class TodoNotifier extends StateNotifier<StateTodo> {
   TodoNotifier({required this.todoRepository}) : super(TodosListStateInitial());
 
   final TodoRepositoryInterface todoRepository;
+
   Future<void> getLocalStorage() async {
     final todos = await todoRepository.loadTodo();
     state = LoadTodos(todos: todos);
@@ -81,8 +36,8 @@ class TodoNotifier extends StateNotifier<StateTodo> {
       todo, // estamos juntando a lista junto com uma nova tarefa
     ]);
   }
-  //----------------------------------
 
+  //----------------------------------
   // removendo uma tarefa da nossa lista através do id
   void remove(String id) async {
     final todos = state.todos;
@@ -99,8 +54,8 @@ class TodoNotifier extends StateNotifier<StateTodo> {
     ];
     state = TodoListRemove(todos: newListTodos);
   }
-  // -----------------------------------
 
+  // -----------------------------------
   // função para marca a tarefa como completa ou incompleta através do ID
   Future<void> toggle(String id) async {
     final todos = state.todos;

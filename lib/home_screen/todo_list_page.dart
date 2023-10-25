@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_list_riverpod/home_screen/components/ListTodo/todo_list_widget.dart';
 import 'package:todo_list_riverpod/home_screen/components/modal_widget.dart';
-import 'package:todo_list_riverpod/home_screen/components/todo_list_widget.dart';
 import 'package:todo_list_riverpod/home_screen/state/todo_provider.dart';
 
-import 'components/filter.dart';
+
+import 'components/filter/filter.dart';
 
 class TodoListPage extends ConsumerStatefulWidget {
   const TodoListPage({super.key});

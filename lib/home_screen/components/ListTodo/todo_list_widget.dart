@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_list_riverpod/home_screen/components/filter/state_filter.dart';
 
-import '../state/todo_provider.dart';
-import 'card_custom_widget.dart';
+import '../../state/todo_provider.dart';
+import '../card_custom_widget.dart';
 
 class TodoListWidget extends ConsumerWidget {
   const TodoListWidget({super.key});
@@ -10,6 +11,7 @@ class TodoListWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stateTodo = ref.watch(homeFilteredListProvider);
+  
     final todos = stateTodo;
 
     return ListView.builder(

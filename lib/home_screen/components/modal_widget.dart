@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo_list_riverpod/home_screen/components/input_custom_widget.dart';
+import 'package:todo_list_riverpod/home_screen/components/input/input_custom_widget.dart';
+import 'package:todo_list_riverpod/home_screen/components/input/state_input_validator.dart';
 import 'package:todo_list_riverpod/home_screen/models/todo_model.dart';
 import 'package:uuid/uuid.dart';
 
@@ -89,9 +90,7 @@ class _ModalState extends ConsumerState<Modal> {
                   controller: _controllerDescription,
                   label: 'Descrição',
                   validator: (text) {
-                    return ref
-                        .read(validatorProvider.notifier)
-                        .validator(text);
+                    return ref.read(validatorProvider.notifier).validator(text);
                   },
                 ),
               ),
